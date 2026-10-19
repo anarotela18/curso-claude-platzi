@@ -1,0 +1,22 @@
+#mission-control {
+  position: fixed; top: 12px; right: 12px; width: 320px; max-height: calc(100vh - 24px); overflow-y: auto;
+  padding: 8px; display: grid; gap: 6px;
+  background: rgba(38, 18, 10, 0.62); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 154, 92, 0.45); border-radius: 10px;
+  color: #ffe3cc; font: 12px/1.35 ui-monospace, Menlo, monospace;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+#mission-control.is-hidden { display: none; }
+#mission-control header { display: flex; justify-content: space-between; gap: 8px; letter-spacing: .08em; font-size: 11px; color: #ff9a5c; }
+#mission-control header span { color: rgba(255, 227, 204, 0.6); white-space: nowrap; }
+.mc-card { padding: 6px 9px; border: 1px solid rgba(255, 154, 92, 0.25); border-radius: 8px; background: rgba(0, 0, 0, 0.22); }
+.mc-top { display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: rgba(255, 227, 204, 0.75); }
+.mc-live { color: #8fe3ff; }
+.mc-value { display: flex; align-items: baseline; gap: 6px; }
+.mc-value b { font-size: 20px; font-weight: 600; color: #fff; }
+.mc-value small { color: #ff9a5c; font-size: 13px; }
+.mc-card canvas { width: 100%; height: 38px; display: block; margin: 0 0 3px; }
+.mc-meaning { margin: 0 0 3px; font: 11.5px/1.35 system-ui, sans-serif; color: #ffe3cc; }
+.mc-source { font-size: 10px; color: rgba(255, 227, 204, 0.5); }
+.mc-card[data-state='error'] { border-color: #ff5c5c; }
+#mission-hint { position: fixed; top: 12px; right: 12px; padding: 4px 8px; border-radius: 6px; background: rgba(38, 18, 10, 0.5); color: rgba(255, 227, 204, 0.75); font: 11px ui-monospace, Menlo, monospace; }

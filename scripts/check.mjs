@@ -21,7 +21,31 @@ try {
   await page.goto(url, { waitUntil: 'load', timeout: 15000 });
   await page.waitForTimeout(3000);
   mkdirSync('screenshots', { recursive: true });
+  // control de misión: los 4 datos deben cargar con números reales y dentro de rangos plausibles
+  await page
+    .waitForFunction(() => document.querySelectorAll('.mc-card[data-state="ok"]').length === 4, null, { timeout: 8000 })
+    .catch(() => {});
+  const cards = await page.$$eval('.mc-card', (els) =>
+    els.map((e) => ({ key: e.dataset.channel, state: e.dataset.state, value: parseFloat(e.dataset.value), points: Number(e.dataset.points), shown: e.querySelector('.mc-value b').textContent }))
+  );
+  const expected = { 'm20.distance': [1, 100], 'm20.elevation': [-4000, 0], 'm20.tilt': [0, 30], 'earth.lighttime': [3, 23] };
+  for (const key of Object.keys(expected)) {
+    const c = cards.find((x) => x.key === key);
+    const [lo, hi] = expected[key];
+    if (!c) errors.push(`mision: falta el dato ${key}`);
+    else if (c.state !== 'ok' || !Number.isFinite(c.value) || c.points < 2) errors.push(`mision: ${key} no cargó (estado=${c.state}, valor=${c.value}, puntos=${c.points})`);
+    else if (c.value < lo || c.value > hi) errors.push(`mision: ${key}=${c.value} fuera de rango [${lo}, ${hi}]`);
+    else info.push(`[check] ${key} = ${c.shown} (${c.points} puntos en la gráfica) OK`);
+  }
   await page.screenshot({ path: 'screenshots/check.png' });
+  // tecla T: oculta y vuelve a mostrar el panel
+  const panelVisible = () => page.$eval('#mission-control', (e) => getComputedStyle(e).display !== 'none');
+  await page.keyboard.press('KeyT');
+  if (await panelVisible()) errors.push('mision: la tecla T no ocultó el panel');
+  await page.screenshot({ path: 'screenshots/check-hidden.png' });
+  await page.keyboard.press('KeyT');
+  if (!(await panelVisible())) errors.push('mision: la tecla T no volvió a mostrar el panel');
+  else info.push('[check] tecla T oculta y muestra el panel OK');
   // conducir: avanzar, girar y avanzar para comprobar movimiento, cámara y huellas
   await page.keyboard.down('KeyW');
   await page.waitForTimeout(2500);

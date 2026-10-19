@@ -6,6 +6,7 @@ import { createSky } from './sky.js';
 import { createMoons } from './moons.js';
 import { createDust } from './dust.js';
 import { createRover } from './rover.js';
+import { startMissionControl } from './mission-control.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -45,6 +46,7 @@ scene.add(dust);
 scene.add(sun.target);
 
 const rover = createRover(scene);
+startMissionControl();
 const lastRover = new THREE.Vector3().copy(rover.position);
 const sunOffset = sunDir.clone().multiplyScalar(300);
 
