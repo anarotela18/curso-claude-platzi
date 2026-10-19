@@ -5,6 +5,7 @@ import { createRocks } from './rocks.js';
 import { createSky } from './sky.js';
 import { createMoons } from './moons.js';
 import { createDust } from './dust.js';
+import { createRover } from './rover.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -20,7 +21,7 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0xd98a58, 0.0045);
 
 const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 3000);
-camera.position.set(0, heightAt(0, 30) + 3, 30);
+camera.position.set(0, heightAt(0, 40) + 4.5, 47);
 
 // Sol de tarde: bajo en el horizonte, a la izquierda
 const sunDir = new THREE.Vector3(-0.5, 0.2, -0.85).normalize();
@@ -41,11 +42,18 @@ scene.add(createRocks());
 scene.add(createMoons());
 const dust = createDust();
 scene.add(dust);
+scene.add(sun.target);
+
+const rover = createRover(scene);
+const lastRover = new THREE.Vector3().copy(rover.position);
+const sunOffset = sunDir.clone().multiplyScalar(300);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, camera.position.y + 10, -100);
+controls.target.set(0, heightAt(0, 40) + 1, 40);
+controls.minDistance = 4;
+controls.maxDistance = 40;
 controls.enableDamping = true;
-controls.maxPolarAngle = Math.PI * 0.6;
+controls.maxPolarAngle = Math.PI * 0.49;
 controls.update();
 
 addEventListener('resize', () => {
@@ -56,8 +64,20 @@ addEventListener('resize', () => {
 
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
-  const t = clock.getElapsedTime();
-  dust.userData.update(t);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+  rover.userData.update(dt);
+  const p = rover.position;
+  // la cámara sigue al rover conservando el ángulo y la distancia que elija el usuario
+  camera.position.add(p).sub(lastRover);
+  lastRover.copy(p);
+  controls.target.set(p.x, p.y + 1.2, p.z);
   controls.update();
+  const ground = heightAt(camera.position.x, camera.position.z) + 0.8;
+  if (camera.position.y < ground) camera.position.y = ground;
+  // la sombra del sol sigue al rover
+  sun.target.position.copy(p);
+  sun.position.copy(p).add(sunOffset);
+  dust.userData.update(t, p.x, p.z);
   renderer.render(scene, camera);
 });

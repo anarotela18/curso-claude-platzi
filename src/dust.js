@@ -32,8 +32,8 @@ export function createDust(count = 1800) {
       color: 0xf0b88a,
     })
   );
-  pts.userData.update = (t) => {
-    pts.position.x = Math.sin(t * 0.05) * 6 + t * 0.6 % 40 - 20;
+  pts.userData.update = (t, cx = 0, cz = 0) => {
+    pts.position.set(cx + Math.sin(t * 0.05) * 6, 0, cz);
   };
   return pts;
 }

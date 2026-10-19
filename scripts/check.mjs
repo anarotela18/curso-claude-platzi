@@ -3,6 +3,7 @@ import { mkdirSync } from 'node:fs';
 
 const url = process.env.URL || 'http://localhost:5173/';
 const errors = [];
+const info = [];
 
 const browser = await chromium.launch({
   channel: 'chrome',
@@ -12,6 +13,7 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 page.on('console', (m) => {
   if (m.type() === 'error') errors.push(`console.error: ${m.text()}`);
+  else if (m.text().startsWith('[')) info.push(m.text());
 });
 page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
 
@@ -20,11 +22,22 @@ try {
   await page.waitForTimeout(3000);
   mkdirSync('screenshots', { recursive: true });
   await page.screenshot({ path: 'screenshots/check.png' });
+  // conducir: avanzar, girar y avanzar para comprobar movimiento, cámara y huellas
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(2500);
+  await page.keyboard.down('KeyD');
+  await page.waitForTimeout(1200);
+  await page.keyboard.up('KeyD');
+  await page.waitForTimeout(1000);
+  await page.keyboard.up('KeyW');
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: 'screenshots/check-drive.png' });
 } catch (e) {
   errors.push(`check: ${e.message}`);
 }
 await browser.close();
 
+info.forEach((l) => console.log(l));
 if (errors.length) {
   console.log(`✗ ${errors.length} error(es):`);
   errors.forEach((e) => console.log(' -', e));
