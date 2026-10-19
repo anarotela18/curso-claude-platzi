@@ -46,6 +46,46 @@ try {
   await page.keyboard.press('KeyT');
   if (!(await panelVisible())) errors.push('mision: la tecla T no volvió a mostrar el panel');
   else info.push('[check] tecla T oculta y muestra el panel OK');
+  // cámaras: cada punto brillante abre una foto real, con pie "cámara · sol · hace N días"
+  const CAMS = ['Mastcam_Z_cams', 'NavCams', 'hazcams_front', 'WATSON'];
+  await page.waitForSelector('.cam-dot', { timeout: 8000 }).catch(() => {});
+  const dots = await page.$$eval('.cam-dot', (els) => els.map((e) => e.dataset.camera));
+  for (const key of CAMS) if (!dots.includes(key)) errors.push(`fotos: falta el punto de la cámara ${key}`);
+  const viewerState = () => page.$eval('#photo-viewer', (e) => e.dataset.state);
+  for (const [n, key] of CAMS.entries()) {
+    if (!dots.includes(key)) continue;
+    const dot = page.locator(`.cam-dot[data-camera="${key}"] i`);
+    if (n === 0) {
+      await dot.hover({ force: true });
+      await page.waitForTimeout(300);
+      await page.screenshot({ path: 'screenshots/check-hover.png' });
+    }
+    await dot.click({ force: true });
+    await page.waitForSelector('#photo-viewer[data-state="shown"]', { timeout: 10000 }).catch(() => {});
+    const shot = await page.$eval('#photo-viewer', (v) => ({
+      state: v.dataset.state,
+      camera: v.dataset.camera,
+      w: v.querySelector('.pv-img').naturalWidth,
+      id: v.querySelector('.pv-img').dataset.photo,
+      cap: v.querySelector('.pv-caption b').textContent,
+    }));
+    if (shot.camera !== key) errors.push(`fotos: se pulsó ${key} pero se abrió ${shot.camera}`);
+    else if (shot.state !== 'shown' || shot.w < 300 || !/sol [\d.]+ · hace [\d.]+ días/.test(shot.cap)) errors.push(`fotos: ${key} no abrió una foto real (${JSON.stringify(shot)})`);
+    else info.push(`[check] ${key}: ${shot.id} ${shot.w}px · ${shot.cap} OK`);
+    await page.screenshot({ path: n === 0 ? 'screenshots/check-photo.png' : `screenshots/check-photo-${key}.png` });
+    if (n === 0) {
+      // flecha derecha: otra foto de la misma cámara; clic: ampliar
+      await page.keyboard.press('ArrowRight');
+      await page.waitForFunction((id) => document.querySelector('.pv-img').dataset.photo !== id && document.querySelector('#photo-viewer').dataset.state === 'shown', shot.id, { timeout: 10000 }).catch(() => errors.push('fotos: la flecha derecha no mostró otra foto'));
+      await page.click('.pv-img');
+      const zoomed = await page.$eval('#photo-viewer', (v) => v.classList.contains('zoom'));
+      if (!zoomed) errors.push('fotos: el clic no amplió la foto');
+      await page.screenshot({ path: 'screenshots/check-photo-zoom.png' });
+      await page.click('.pv-img');
+    }
+    await page.keyboard.press('Escape');
+    if ((await viewerState()) !== 'idle') errors.push(`fotos: Esc no cerró el visor de ${key}`);
+  }
   // conducir: avanzar, girar y avanzar para comprobar movimiento, cámara y huellas
   await page.keyboard.down('KeyW');
   await page.waitForTimeout(2500);

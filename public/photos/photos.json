@@ -1,0 +1,85 @@
+{
+ "fetchedAt": "2026-10-19T20:56:00.105Z",
+ "photos": [
+  {
+   "camera": "Mastcam_Z_cams",
+   "id": "PIA26208",
+   "title": "Perseverance's Mastcam-Z Views Castell Henllys",
+   "sol": 763,
+   "dateTaken": "2023-04-13",
+   "credit": "NASA/JPL-Caltech/ASU/MSSS",
+   "source": "https://images.nasa.gov/details/PIA26208",
+   "file": "/photos/PIA26208.jpg"
+  },
+  {
+   "camera": "Mastcam_Z_cams",
+   "id": "PIA25660",
+   "title": "Perseverance's Mastcam-Z Views Rockytop",
+   "sol": 507,
+   "dateTaken": "2022-07-24",
+   "credit": "NASA/JPL-Caltech/ASU/MSSS",
+   "source": "https://images.nasa.gov/details/PIA25660",
+   "file": "/photos/PIA25660.jpg"
+  },
+  {
+   "camera": "NavCams",
+   "id": "PIA25658",
+   "title": "Perseverance's Navcam Views Bettys Rock",
+   "sol": 474,
+   "dateTaken": "2022-06-20",
+   "credit": "NASA/JPL-Caltech",
+   "source": "https://images.nasa.gov/details/PIA25658",
+   "file": "/photos/PIA25658.jpg"
+  },
+  {
+   "camera": "NavCams",
+   "id": "PIA26479",
+   "title": "Perseverance Views Slippery Terrain",
+   "sol": 1326,
+   "dateTaken": "2024-11-11",
+   "credit": "NASA/JPL-Caltech",
+   "source": "https://images.nasa.gov/details/PIA26479",
+   "file": "/photos/PIA26479.jpg"
+  },
+  {
+   "camera": "hazcams_front",
+   "id": "PIA25339",
+   "title": "Jezero Crater's Yori Pass",
+   "sol": 609,
+   "dateTaken": "2022-11-05",
+   "credit": "NASA/JPL-Caltech/ASU",
+   "source": "https://images.nasa.gov/details/PIA25339",
+   "file": "/photos/PIA25339.jpg"
+  },
+  {
+   "camera": "hazcams_front",
+   "id": "PIA25325",
+   "title": "Enchanted View of Jezero Rocks",
+   "sol": 424,
+   "dateTaken": "2022-04-30",
+   "credit": "NASA/JPL-Caltech",
+   "source": "https://images.nasa.gov/details/PIA25325",
+   "file": "/photos/PIA25325.jpg"
+  },
+  {
+   "camera": "WATSON",
+   "id": "PIA24542",
+   "title": "Perseverance's Selfie with Ingenuity",
+   "sol": 46,
+   "dateTaken": "2021-04-06",
+   "credit": "NASA/JPL-Caltech/MSSS",
+   "source": "https://images.nasa.gov/details/PIA24542",
+   "file": "/photos/PIA24542.jpg"
+  },
+  {
+   "camera": "WATSON",
+   "id": "PIA25659",
+   "title": "Perseverance's WATSON Views Bettys Rock",
+   "sol": 476,
+   "dateTaken": "2022-06-22",
+   "credit": "NASA/JPL-Caltech",
+   "source": "https://images.nasa.gov/details/PIA25659",
+   "file": "/photos/PIA25659.jpg"
+  }
+ ]
+}

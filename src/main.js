@@ -7,6 +7,7 @@ import { createMoons } from './moons.js';
 import { createDust } from './dust.js';
 import { createRover } from './rover.js';
 import { startMissionControl } from './mission-control.js';
+import { startCameraPhotos } from './camera-photos.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -22,7 +23,7 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0xd98a58, 0.0045);
 
 const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 3000);
-camera.position.set(0, heightAt(0, 40) + 4.5, 47);
+camera.position.set(8, heightAt(8, 46) + 3.5, 46);
 
 // Sol de tarde: bajo en el horizonte, a la izquierda
 const sunDir = new THREE.Vector3(-0.5, 0.2, -0.85).normalize();
@@ -45,7 +46,12 @@ const dust = createDust();
 scene.add(dust);
 scene.add(sun.target);
 
-const rover = createRover(scene);
+let cameraPhotos;
+const rover = createRover(scene, (r) => {
+  startCameraPhotos({ rover: r, camera })
+    .then((api) => (cameraPhotos = api))
+    .catch((err) => console.error(`[fotos] ${err.message}`));
+});
 startMissionControl();
 const lastRover = new THREE.Vector3().copy(rover.position);
 const sunOffset = sunDir.clone().multiplyScalar(300);
@@ -81,5 +87,6 @@ renderer.setAnimationLoop(() => {
   sun.target.position.copy(p);
   sun.position.copy(p).add(sunOffset);
   dust.userData.update(t, p.x, p.z);
+  cameraPhotos?.update();
   renderer.render(scene, camera);
 });
